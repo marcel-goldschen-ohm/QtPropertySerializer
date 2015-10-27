@@ -64,15 +64,6 @@
 class ObjectSerializerQt {
 public:
 
-//    class VariantMap : public QVariantMap {
-//    public:
-//        QVariantMap& operator[](const QString &key) { return QVariantMap::operator[](key).toMap(); }
-//        const QVariantMap operator[](const QString &key) const { return QVariantMap::operator[](key).toMap(); }
-
-//        QVariantList& operator[](const QString &key) { return QVariantMap::operator[](key).toList(); }
-//        const QVariantList operator[](const QString &key) const { return QVariantMap::operator[](key).toList(); }
-//    };
-
     /* --------------------------------------------------------------------------------
      * Factory for objects derived from QObject.
      *
