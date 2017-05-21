@@ -37,10 +37,20 @@ QVariantMap (key, value) pairs are either:
 
 See `test.h/cpp` for complete example code.
 
+#### Just include it.
+
 ```cpp
 #include "QtObjectPropertySerializer.h"
+```
 
-// QObject tree
+#### A QObject tree.
+
+    jane
+    |-- john
+    |-- josephine
+        |-- spot
+
+```cpp
 class Person : public QObject { ... };
 class Pet : public QObject { ... };
 Person jane;
@@ -50,45 +60,66 @@ Pet *spot = new Pet;
 john->setParent(&jane);
 josephine->setParent(&jane);
 spot->setParent(josephine);
-// jane
-// |-- john
-// |-- josephine
-//     |-- spot
+```
 
-// Serialize to QVariantMap.
+#### Serialize QObject ==> QVariantMap.
+
+```cpp
 QVariantMap janePropertyTree = QtObjectPropertySerializer::serialize(&jane);
+```
 
-// Deserialize from QVariantMap.
-QtObjectPropertySerializer::deserialize(&jane, janePropertyTree);
+* Access child QVariantMaps in parent QVariantMap by class name.
+* Multiple children of the same type are placed in a QVariantList.
 
-// Deserialize (requires runtime dynamic object creation).
-QtObjectPropertySerializer::ObjectFactory factory;
-factory.registerCreator("Person", factory.defaultCreator<Person>);
-factory.registerCreator("Pet", factory.defaultCreator<Pet>);
-Person bizarroJane;
-// Prior to deserialization, bizarroJane has no children.
-QtObjectPropertySerializer::deserialize(&bizarroJane, janePropertyTree, &factory);
-// After deserialization, bizarroJane is identical to Jane
-// with children John and Josephine, and Josephine's pet Spot.
-
-// Serialize to/from JSON file.
-QtObjectPropertySerializer::writeJson(&jane, "jane.json");
-QtObjectPropertySerializer::readJson(&jane, "jane.json");
-
-// Deserialize from JSON file (dynamically create object tree).
-Person juniper;
-QtObjectPropertySerializer::readJson(&juniper, "jane.json", &factory);
-
-// Access child QVariantMaps in parent QVariantMap by class name.
-// Multiple children of the same type are placed in a QVariantList.
+```cpp
 QVariantList janePersonList = janePropertyTree["Person"].toList();
 QVariantMap johnPropertyTree = janePersonList[0].toMap();
 QVariantMap josephinePropertyTree = janePersonList[1].toMap();
 QVariantMap spotPropertyTree = josephinePropertyTree["Pet"].toMap();
+```
 
-// Access properties in QVariantMap by property name.
+* Access properties in QVariantMap by property name.
+
+```cpp
 qDebug() << janePropertyTree["objectName"];
 qDebug() << johnPropertyTree["objectName"];
 qDebug() << josephinePropertyTree["objectName"];
 qDebug() << spotPropertyTree["objectName"];
+```
+
+#### Deserialize QVariantMap ==> QObject.
+
+Deserialize into a pre-existing object tree.
+
+```cpp
+QtObjectPropertySerializer::deserialize(&jane, janePropertyTree);
+```
+
+Deserialize into an object without pre-existing child objects (requires runtime dynamic object creation using a factory).
+
+```cpp
+QtObjectPropertySerializer::ObjectFactory factory;
+factory.registerCreator("Person", factory.defaultCreator<Person>);
+factory.registerCreator("Pet", factory.defaultCreator<Pet>);
+
+// factory.defaultCreator<T> is a static function taking
+// no arguments and returning a QObject* for `new T()`.
+// You are also free to use your own custom creator function here.
+
+// Prior to deserialization, bizarroJane has no children.
+Person bizarroJane;
+
+// After deserialization, bizarroJane is identical to Jane
+// with children John and Josephine, and Josephine's pet Spot.
+QtObjectPropertySerializer::deserialize(&bizarroJane, janePropertyTree, &factory);
+```
+
+#### Serialize QObject <==> JSON file.
+
+```cpp
+QtObjectPropertySerializer::writeJson(&jane, "jane.json");
+QtObjectPropertySerializer::readJson(&jane, "jane.json");
+
+Person juniper;
+QtObjectPropertySerializer::readJson(&juniper, "jane.json", &factory);
 ```
