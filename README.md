@@ -19,7 +19,10 @@ For JSON serialization, also check out [qjson](https://github.com/flavio/qjson).
 
 ## INSTALL
 
-Everything is in `QtObjectPropertySerializer.h`. Just include it.
+Everything is in:
+
+* `QtObjectPropertySerializer.h`
+* `QtObjectPropertySerializer.cpp`
 
 ### Requires:
 
@@ -36,8 +39,6 @@ QVariantMap (key, value) pairs are either:
 ## Quick start code snippets
 
 See `test.h/cpp` for complete example code.
-
-#### Just include it.
 
 ```cpp
 #include "QtObjectPropertySerializer.h"

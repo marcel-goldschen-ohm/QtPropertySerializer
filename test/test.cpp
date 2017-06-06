@@ -6,9 +6,11 @@
  * -------------------------------------------------------------------------------- */
 
 #include "test.h"
-#include "QtObjectPropertySerializer.h"
+
 #include <assert.h>
 #include <iostream>
+
+#include "QtObjectPropertySerializer.h"
 
 int main(int, char **)
 {
@@ -137,13 +139,19 @@ int main(int, char **)
     assert(bizarroSpot->species == spot->species);
     assert(bizarroSpot->property("vaccinated").toBool() == spot->property("vaccinated").toBool());
     
+    std::cout << "OK" << std::endl;
+    
     //------------------------
     // QObject <--> JSON file
     //------------------------
     
+    std::cout << "Checking serialization/deserialization to/from JSON file... ";
+    
     // These convert to/from QVariantMap under the hood.
     QtObjectPropertySerializer::writeJson(&jane, "jane.json");
     QtObjectPropertySerializer::readJson(&jane, "jane.json", &factory);
+    
+    std::cout << "OK" << std::endl;
     
     return 0;
 }

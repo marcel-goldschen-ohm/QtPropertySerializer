@@ -10,5 +10,5 @@ RCC_DIR = Debug/.rcc
 UI_DIR = Debug/.ui
 
 INCLUDEPATH += ..
-HEADERS += test.h
-SOURCES += test.cpp
+HEADERS += test.h ../QtObjectPropertySerializer.h
+SOURCES += test.cpp ../QtObjectPropertySerializer.cpp
