@@ -10,6 +10,8 @@
 #ifndef __QtObjectPropertySerializer_H__
 #define __QtObjectPropertySerializer_H__
 
+#include <functional>
+
 #include <QByteArray>
 #include <QMap>
 #include <QObject>
@@ -30,15 +32,15 @@ namespace QtObjectPropertySerializer
     class ObjectFactory
     {
     public:
-        typedef QObject* (*ObjectCreatorFuncPtr)();
-        typedef QMap<QByteArray, ObjectCreatorFuncPtr> ObjectCreatorMap;
+        typedef std::function<QObject*()> ObjectCreatorFunction;
+        typedef QMap<QByteArray, ObjectCreatorFunction> ObjectCreatorMap;
         
     public:
-        void registerCreator(const QByteArray &className, ObjectCreatorFuncPtr creator) { _objectCreatorMap[className] = creator; }
+        void registerCreator(const QByteArray &className, ObjectCreatorFunction creator) { _objectCreatorMap[className] = creator; }
         bool hasCreator(const QByteArray &className) const { return _objectCreatorMap.contains(className); }
-        ObjectCreatorFuncPtr getCreator(const QByteArray &className) const { return _objectCreatorMap.value(className); }
+        ObjectCreatorFunction getCreator(const QByteArray &className) const { return _objectCreatorMap.value(className); }
         QList<QByteArray> creators() const { return _objectCreatorMap.keys(); }
-        QObject* create(const QByteArray &className) const { return _objectCreatorMap.contains(className) ? (*_objectCreatorMap.value(className))() : 0; }
+        QObject* create(const QByteArray &className) const { return _objectCreatorMap.contains(className) ? _objectCreatorMap.value(className)() : 0; }
         
         // For convenience. e.g. call ObjectFactory::registerCreator("MyClass", ObjectFactory::defaultCreator<MyClass>);
         template <class T>
