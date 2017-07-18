@@ -1,4 +1,4 @@
-# QtObjectPropertySerializer
+# QtPropertySerializer
 
 Simple C++ serialization for a QObject property tree.
 
@@ -21,8 +21,8 @@ For JSON serialization, also check out [qjson](https://github.com/flavio/qjson).
 
 Everything is in:
 
-* `QtObjectPropertySerializer.h`
-* `QtObjectPropertySerializer.cpp`
+* `QtPropertySerializer.h`
+* `QtPropertySerializer.cpp`
 
 ### Requires:
 
@@ -41,7 +41,7 @@ QVariantMap (key, value) pairs are either:
 See `test.h/cpp` for complete example code.
 
 ```cpp
-#include "QtObjectPropertySerializer.h"
+#include "QtPropertySerializer.h"
 ```
 
 #### A QObject tree.
@@ -66,7 +66,7 @@ spot->setParent(josephine);
 #### Serialize QObject ==> QVariantMap.
 
 ```cpp
-QVariantMap janePropertyTree = QtObjectPropertySerializer::serialize(&jane);
+QVariantMap janePropertyTree = QtPropertySerializer::serialize(&jane);
 ```
 
 * Access child QVariantMaps in parent QVariantMap by class name.
@@ -93,13 +93,13 @@ qDebug() << spotPropertyTree["objectName"];
 Deserialize into a pre-existing object tree.
 
 ```cpp
-QtObjectPropertySerializer::deserialize(&jane, janePropertyTree);
+QtPropertySerializer::deserialize(&jane, janePropertyTree);
 ```
 
 Deserialize into an object without pre-existing child objects (requires runtime dynamic object creation using a factory).
 
 ```cpp
-QtObjectPropertySerializer::ObjectFactory factory;
+QtPropertySerializer::ObjectFactory factory;
 factory.registerCreator("Person", factory.defaultCreator<Person>);
 factory.registerCreator("Pet", factory.defaultCreator<Pet>);
 
@@ -112,15 +112,15 @@ Person bizarroJane;
 
 // After deserialization, bizarroJane is identical to Jane
 // with children John and Josephine, and Josephine's pet Spot.
-QtObjectPropertySerializer::deserialize(&bizarroJane, janePropertyTree, &factory);
+QtPropertySerializer::deserialize(&bizarroJane, janePropertyTree, &factory);
 ```
 
 #### Serialize QObject <==> JSON file.
 
 ```cpp
-QtObjectPropertySerializer::writeJson(&jane, "jane.json");
-QtObjectPropertySerializer::readJson(&jane, "jane.json");
+QtPropertySerializer::writeJson(&jane, "jane.json");
+QtPropertySerializer::readJson(&jane, "jane.json");
 
 Person juniper;
-QtObjectPropertySerializer::readJson(&juniper, "jane.json", &factory);
+QtPropertySerializer::readJson(&juniper, "jane.json", &factory);
 ```
