@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------------
- * Example tests for QtObjectPropertySerializer.
+ * Example tests for QtPropertySerializer.
  *
  * Author: Marcel Paz Goldschen-Ohm
  * Email: marcel.goldschen@gmail.com

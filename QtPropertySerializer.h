@@ -7,8 +7,8 @@
  * Email: marcel.goldschen@gmail.com
  * -------------------------------------------------------------------------------- */
 
-#ifndef __QtObjectPropertySerializer_H__
-#define __QtObjectPropertySerializer_H__
+#ifndef __QtPropertySerializer_H__
+#define __QtPropertySerializer_H__
 
 #include <functional>
 
@@ -24,7 +24,7 @@
 #include <QDebug>
 #endif
 
-namespace QtObjectPropertySerializer
+namespace QtPropertySerializer
 {
     /* --------------------------------------------------------------------------------
      * Object factory for dynamic object creation during deserialization.
@@ -45,6 +45,8 @@ namespace QtObjectPropertySerializer
         // For convenience. e.g. call ObjectFactory::registerCreator("MyClass", ObjectFactory::defaultCreator<MyClass>);
         template <class T>
         static QObject* defaultCreator() { return new T(); }
+        template <class T>
+        static QObject* defaultChildCreator(QObject *parent) { return new T(parent); }
         
     private:
         ObjectCreatorMap _objectCreatorMap;
@@ -69,6 +71,6 @@ namespace QtObjectPropertySerializer
     bool readJson(QObject *object, const QString &filePath, ObjectFactory *factory = 0);
     bool writeJson(QObject *object, const QString &filePath, int childDepth = -1, bool includeReadOnlyProperties = true, bool includeObjectName = true);
     
-} // QtObjectPropertySerializer
+} // QtPropertySerializer
 
 #endif

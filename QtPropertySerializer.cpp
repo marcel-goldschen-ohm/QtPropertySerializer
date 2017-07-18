@@ -3,7 +3,7 @@
  * Email: marcel.goldschen@gmail.com
  * -------------------------------------------------------------------------------- */
 
-#include "QtObjectPropertySerializer.h"
+#include "QtPropertySerializer.h"
 
 #include <QFile>
 #include <QJsonDocument>
@@ -12,7 +12,7 @@
 #include <QTextStream>
 #include <QVariantList>
 
-namespace QtObjectPropertySerializer
+namespace QtPropertySerializer
 {
     QVariantMap serialize(const QObject *object, int childDepth, bool includeReadOnlyProperties, bool includeObjectName)
     {
@@ -203,4 +203,4 @@ namespace QtObjectPropertySerializer
         return true;
     }
     
-} // QtObjectPropertySerializer
+} // QtPropertySerializer

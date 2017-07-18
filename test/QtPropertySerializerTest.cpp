@@ -5,16 +5,16 @@
  * Email: marcel.goldschen@gmail.com
  * -------------------------------------------------------------------------------- */
 
-#include "test.h"
+#include "QtPropertySerializerTest.h"
 
 #include <assert.h>
 #include <iostream>
 
-#include "QtObjectPropertySerializer.h"
+#include "QtPropertySerializer.h"
 
 int main(int, char **)
 {
-    std::cout << "Running tests for QtObjectPropertySerializer..." << std::endl;
+    std::cout << "Running tests for QtPropertySerializer..." << std::endl;
     
     // Jane is the root of our family tree.
     Person jane("Jane");
@@ -46,7 +46,7 @@ int main(int, char **)
     std::cout << "Checking serialization from QObject to QVariantMap... ";
     
     // Get Jane's property tree.
-    QVariantMap janeData = QtObjectPropertySerializer::serialize(&jane);
+    QVariantMap janeData = QtPropertySerializer::serialize(&jane);
     
     // Map keys for properties are the property names.
     // Map keys for child objects are the child object class names.
@@ -88,7 +88,7 @@ int main(int, char **)
     josephine->heightInCm = 0;
     spot->species = "cat";
     
-    QtObjectPropertySerializer::deserialize(&jane, janeData);
+    QtPropertySerializer::deserialize(&jane, janeData);
     
     assert(jane.heightInCm == janeData["height"]);
     assert(john->heightInCm == johnData["height"]);
@@ -102,7 +102,7 @@ int main(int, char **)
     // Try and load Jane's property tree into a new object without preexisting children.
     // This will fail to deserialize the children.
     Person bizarroJane;
-    QtObjectPropertySerializer::deserialize(&bizarroJane, janeData);
+    QtPropertySerializer::deserialize(&bizarroJane, janeData);
     
     // Bizarro Jane should have Jane's properties, but NO children.
     assert(bizarroJane.objectName() == jane.objectName());
@@ -116,10 +116,10 @@ int main(int, char **)
     
     // Use a factory for dynamic creation of Person objects
     // and try again to deserialize janeData into bizzaro Jane.
-    QtObjectPropertySerializer::ObjectFactory factory;
+    QtPropertySerializer::ObjectFactory factory;
     factory.registerCreator("Person", factory.defaultCreator<Person>);
     factory.registerCreator("Pet", factory.defaultCreator<Pet>);
-    QtObjectPropertySerializer::deserialize(&bizarroJane, janeData, &factory);
+    QtPropertySerializer::deserialize(&bizarroJane, janeData, &factory);
     
     // Bizzaro Jane should now be identical to Jane.
     assert(bizarroJane.children().size() == 2);
@@ -148,8 +148,8 @@ int main(int, char **)
     std::cout << "Checking serialization/deserialization to/from JSON file... ";
     
     // These convert to/from QVariantMap under the hood.
-    QtObjectPropertySerializer::writeJson(&jane, "jane.json");
-    QtObjectPropertySerializer::readJson(&jane, "jane.json", &factory);
+    QtPropertySerializer::writeJson(&jane, "jane.json");
+    QtPropertySerializer::readJson(&jane, "jane.json", &factory);
     
     std::cout << "OK" << std::endl;
     
