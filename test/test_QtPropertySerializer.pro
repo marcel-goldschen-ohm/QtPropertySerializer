@@ -1,4 +1,4 @@
-TARGET = QtPropertySerializerTest
+TARGET = test_QtPropertySerializer
 TEMPLATE = app
 QT += core
 QT -= gui
@@ -11,8 +11,8 @@ UI_DIR = Debug/.ui
 
 INCLUDEPATH += ..
 
-HEADERS += QtPropertySerializerTest.h
-SOURCES += QtPropertySerializerTest.cpp
-
 HEADERS += ../QtPropertySerializer.h
 SOURCES += ../QtPropertySerializer.cpp
+
+HEADERS += test_QtPropertySerializer.h
+SOURCES += test_QtPropertySerializer.cpp

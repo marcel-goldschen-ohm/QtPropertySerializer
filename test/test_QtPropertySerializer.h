@@ -5,6 +5,9 @@
  * Email: marcel.goldschen@gmail.com
  * -------------------------------------------------------------------------------- */
 
+#ifndef __test_QtPropertySerializer_H__
+#define __test_QtPropertySerializer_H__
+
 #include <QDate>
 #include <QObject>
 #include <QString>
@@ -36,3 +39,5 @@ public:
     
     Pet(const QString &name = "") { setObjectName(name); }
 };
+
+#endif // __test_QtPropertySerializer_H__

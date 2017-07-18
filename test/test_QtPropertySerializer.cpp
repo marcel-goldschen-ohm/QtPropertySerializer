@@ -5,7 +5,7 @@
  * Email: marcel.goldschen@gmail.com
  * -------------------------------------------------------------------------------- */
 
-#include "QtPropertySerializerTest.h"
+#include "test_QtPropertySerializer.h"
 
 #include <assert.h>
 #include <iostream>
