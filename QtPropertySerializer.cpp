@@ -66,6 +66,16 @@ namespace QtPropertySerializer
         } else {
             data[key] = value;
         }
+
+        if (value.canConvert<QList<QObject *>>()) {
+            QList<QObject *> list = qvariant_cast<QList<QObject *> >(value);
+            QVariantList result;
+            for (QObject *each : list) {
+                result.append(QtPropertySerializer::serialize(each));
+            }
+
+            data[key] = result;
+        }
     }
     
     void deserialize(QObject *object, const QVariantMap &data, ObjectFactory *factory)
