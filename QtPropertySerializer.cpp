@@ -49,11 +49,11 @@ namespace QtPropertySerializer
     void addMappedData(QVariantMap &data, const QByteArray &key, const QVariant &value)
     {
         if(value.canConvert<QObject*>()) {
-            // Handle QObject* values.
+            // Handle QObject* values. !!! This will be deserialized as a child object!
             QObject *object = qvariant_cast<QObject*>(value);
             addMappedData(data, key, serialize(object));
         } else if(value.canConvert<QList<QObject*> >()) {
-            // Handle QList<QObject*> values.
+            // Handle QList<QObject*> values. !!! These will be deserialized as child objects!
             QList<QObject*> objects = qvariant_cast<QList<QObject*> >(value);
             QVariantList values;
             for(QObject *object : objects) {
@@ -113,7 +113,7 @@ namespace QtPropertySerializer
                 }
                 // If we still have not found an existing child, attempt to create one dynamically.
                 if(!childFound) {
-                    QObject *child = 0;
+                    QObject *child = NULL;
                     if(className == QByteArray("QObject"))
                         child = new QObject;
                     else if(factory && factory->hasCreator(className))
@@ -166,7 +166,7 @@ namespace QtPropertySerializer
                         }
                         // If we still havent found an existing child, attempt to create one dynamically.
                         if(!childFound) {
-                            QObject *child = 0;
+                            QObject *child = NULL;
                             if(className == QByteArray("QObject"))
                                 child = new QObject;
                             else if(factory && factory->hasCreator(className))
@@ -204,13 +204,13 @@ namespace QtPropertySerializer
         return true;
     }
     
-    bool writeJson(QObject *object, const QString &filePath, int childDepth, bool includeReadOnlyProperties, bool includeObjectName)
+    bool writeJson(QObject *object, const QString &filePath, int childDepth, bool includeReadOnlyProperties)
     {
         QFile file(filePath);
         if(!file.open(QIODevice::Text | QIODevice::WriteOnly))
             return false;
         QTextStream out(&file);
-        QVariantMap data = serialize(object, childDepth, includeReadOnlyProperties, includeObjectName);
+        QVariantMap data = serialize(object, childDepth, includeReadOnlyProperties);
         out << QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented);
         file.close();
         return true;

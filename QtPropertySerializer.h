@@ -72,13 +72,13 @@ namespace QtPropertySerializer
     /* --------------------------------------------------------------------------------
      * Deserialize QVariantMap --> QObject
      * -------------------------------------------------------------------------------- */
-    void deserialize(QObject *object, const QVariantMap &data, ObjectFactory *factory = 0);
+    void deserialize(QObject *object, const QVariantMap &data, ObjectFactory *factory = NULL);
     
     /* --------------------------------------------------------------------------------
      * Read/Write from/to JSON file.
      * -------------------------------------------------------------------------------- */
-    bool readJson(QObject *object, const QString &filePath, ObjectFactory *factory = 0);
-    bool writeJson(QObject *object, const QString &filePath, int childDepth = -1, bool includeReadOnlyProperties = true, bool includeObjectName = true);
+    bool readJson(QObject *object, const QString &filePath, ObjectFactory *factory = NULL);
+    bool writeJson(QObject *object, const QString &filePath, int childDepth = -1, bool includeReadOnlyProperties = true);
     
 } // QtPropertySerializer
 
