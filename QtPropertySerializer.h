@@ -80,8 +80,11 @@ namespace QtPropertySerializer
     /* --------------------------------------------------------------------------------
      * Read/Write from/to JSON file.
      * -------------------------------------------------------------------------------- */
-    bool readJson(QObject *object, const QString &filePath, ObjectFactory *factory = NULL);
-    bool writeJson(QObject *object, const QString &filePath, int childDepth = -1, bool includeReadOnlyProperties = true);
+    QVariantMap readJson(const QString &filePath);
+    void writeJson(const QVariantMap &data, const QString &filePath);
+    
+    void readJson(QObject *object, const QString &filePath, ObjectFactory *factory = NULL);
+    void writeJson(QObject *object, const QString &filePath, int childDepth = -1, bool includeReadOnlyProperties = true);
     
 } // QtPropertySerializer
 

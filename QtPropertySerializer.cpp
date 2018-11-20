@@ -242,28 +242,36 @@ namespace QtPropertySerializer
         }
     }
     
-    bool readJson(QObject *object, const QString &filePath, ObjectFactory *factory)
+    QVariantMap readJson(const QString &filePath)
     {
         QFile file(filePath);
         if(!file.open(QIODevice::Text | QIODevice::ReadOnly))
-            return false;
+            throw std::runtime_error("QtPropertySerializer::readJson: Failed to open file " + filePath.toStdString());
         QString buffer = file.readAll();
         file.close();
-        QVariantMap data = QJsonDocument::fromJson(buffer.toUtf8()).toVariant().toMap();
-        deserialize(object, data, factory);
-        return true;
+        return QJsonDocument::fromJson(buffer.toUtf8()).toVariant().toMap();
     }
     
-    bool writeJson(QObject *object, const QString &filePath, int childDepth, bool includeReadOnlyProperties)
+    void writeJson(const QVariantMap &data, const QString &filePath)
     {
         QFile file(filePath);
         if(!file.open(QIODevice::Text | QIODevice::WriteOnly))
-            return false;
+            throw std::runtime_error("QtPropertySerializer::writeJson: Failed to open file " + filePath.toStdString());
         QTextStream out(&file);
-        QVariantMap data = serialize(object, childDepth, includeReadOnlyProperties);
         out << QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented);
         file.close();
-        return true;
+    }
+    
+    void readJson(QObject *object, const QString &filePath, ObjectFactory *factory)
+    {
+        QVariantMap data = readJson(filePath);
+        deserialize(object, data, factory);
+    }
+    
+    void writeJson(QObject *object, const QString &filePath, int childDepth, bool includeReadOnlyProperties)
+    {
+        QVariantMap data = serialize(object, childDepth, includeReadOnlyProperties);
+        writeJson(data, filePath);
     }
     
 } // QtPropertySerializer
