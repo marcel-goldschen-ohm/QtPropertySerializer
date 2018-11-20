@@ -48,29 +48,36 @@ namespace QtPropertySerializer
     
     void addMappedData(QVariantMap &data, const QByteArray &key, const QVariant &value)
     {
-        if(data.contains(key)) {
-            // If data already contains key, make sure key's value is a list and append the input value.
-            QVariant &existingData = data[key];
-            if(existingData.type() == QVariant::List) {
-                QVariantList values = existingData.toList();
-                values.append(value);
-                data[key] = values;
-            } else {
-                QVariantList values;
-                values.append(existingData);
-                values.append(value);
-                data[key] = values;
+        if(value.canConvert<QObject*>()) {
+            // Handle QObject* values.
+            QObject *object = qvariant_cast<QObject*>(value);
+            addMappedData(data, key, serialize(object));
+        } else if(value.canConvert<QList<QObject*> >()) {
+            // Handle QList<QObject*> values.
+            QList<QObject*> objects = qvariant_cast<QList<QObject*> >(value);
+            QVariantList values;
+            for(QObject *object : objects) {
+                values.append(serialize(object));
             }
+            addMappedData(data, key, values);
         } else {
-            data[key] = value;
-        }
-        if(value.canConvert<QList<QObject *>>()) {
-            QList<QObject *> list = qvariant_cast<QList<QObject *> >(value);
-            QVariantList result;
-            for (QObject *each : list) {
-                result.append(QtPropertySerializer::serialize(each));
+            // Handle all other values (i.e. QVariant, QVariantList, QVariantMap, ...).
+            if(data.contains(key)) {
+                // If data already contains key, make sure key's value is a list and append the input value.
+                QVariant &existingData = data[key];
+                if(existingData.type() == QVariant::List) {
+                    QVariantList values = existingData.toList();
+                    values.append(value);
+                    data[key] = values;
+                } else {
+                    QVariantList values;
+                    values.append(existingData);
+                    values.append(value);
+                    data[key] = values;
+                }
+            } else {
+                data[key] = value;
             }
-            data[key] = result;
         }
     }
     
