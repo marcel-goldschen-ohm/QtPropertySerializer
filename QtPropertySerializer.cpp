@@ -14,7 +14,7 @@
 
 namespace QtPropertySerializer
 {
-    QVariantMap serialize(const QObject *object, int childDepth, bool includeReadOnlyProperties, bool includeObjectName)
+    QVariantMap serialize(const QObject *object, int childDepth, bool includeReadOnlyProperties)
     {
         QVariantMap data;
         if(!object)
@@ -26,10 +26,8 @@ namespace QtPropertySerializer
             const QMetaProperty metaProperty = metaObject->property(i);
             if(metaProperty.isReadable() && (includeReadOnlyProperties || metaProperty.isWritable())) {
                 const QByteArray propertyName = QByteArray(metaProperty.name());
-                if(includeObjectName || (propertyName != "objectName")) {
-                    const QVariant propertyValue = object->property(propertyName.constData());
-                    addMappedData(data, propertyName, propertyValue);
-                }
+                const QVariant propertyValue = object->property(propertyName.constData());
+                addMappedData(data, propertyName, propertyValue);
             }
         }
         foreach(const QByteArray &propertyName, object->dynamicPropertyNames()) {
@@ -66,14 +64,12 @@ namespace QtPropertySerializer
         } else {
             data[key] = value;
         }
-
-        if (value.canConvert<QList<QObject *>>()) {
+        if(value.canConvert<QList<QObject *>>()) {
             QList<QObject *> list = qvariant_cast<QList<QObject *> >(value);
             QVariantList result;
             for (QObject *each : list) {
                 result.append(QtPropertySerializer::serialize(each));
             }
-
             data[key] = result;
         }
     }

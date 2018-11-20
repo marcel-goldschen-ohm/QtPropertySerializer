@@ -64,7 +64,7 @@ namespace QtPropertySerializer
     /* --------------------------------------------------------------------------------
      * Serialize QObject --> QVariantMap
      * -------------------------------------------------------------------------------- */
-    QVariantMap serialize(const QObject *object, int childDepth = -1, bool includeReadOnlyProperties = true, bool includeObjectName = true);
+    QVariantMap serialize(const QObject *object, int childDepth = -1, bool includeReadOnlyProperties = true);
     
     // Helper function for serialize().
     void addMappedData(QVariantMap &data, const QByteArray &key, const QVariant &value);
