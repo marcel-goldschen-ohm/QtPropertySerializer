@@ -14,6 +14,7 @@
 
 #include <QByteArray>
 #include <QMap>
+#include <QMetaObject>
 #include <QObject>
 #include <QString>
 #include <QVariant>
@@ -35,12 +36,17 @@ namespace QtPropertySerializer
         typedef std::function<QObject*()> ObjectCreatorFunction;
         typedef QMap<QByteArray, ObjectCreatorFunction> ObjectCreatorMap;
         
+        // Map of (key,creator) pairs.
+        ObjectCreatorMap creators;
+        
     public:
-        void registerCreator(const QByteArray &className, ObjectCreatorFunction creator) { _objectCreatorMap[className] = creator; }
-        bool hasCreator(const QByteArray &className) const { return _objectCreatorMap.contains(className); }
-        ObjectCreatorFunction getCreator(const QByteArray &className) const { return _objectCreatorMap.value(className); }
-        QList<QByteArray> creators() const { return _objectCreatorMap.keys(); }
-        QObject* create(const QByteArray &className) const { return _objectCreatorMap.contains(className) ? _objectCreatorMap.value(className)() : 0; }
+        // These functions are not absolutely necessary since the creators map is publicly accessible,
+        // but I've kept them here for backwards compatibility and convenience.
+        void registerCreator(const QByteArray &key, ObjectCreatorFunction creator) { creators[key] = creator; }
+        bool hasCreator(const QByteArray &key) const { return creators.contains(key); }
+        ObjectCreatorFunction getCreator(const QByteArray &key) const { return creators.value(key); }
+        QList<QByteArray> creatorKeys() const { return creators.keys(); }
+        QObject* create(const QByteArray &key) const { return creators.contains(key) ? creators.value(key)() : 0; }
         
         // For convenience. e.g. call ObjectFactory::registerCreator("MyClass", ObjectFactory::defaultCreator<MyClass>);
         template <class T>
@@ -48,8 +54,11 @@ namespace QtPropertySerializer
         template <class T>
         static QObject* defaultChildCreator(QObject *parent) { return new T(parent); }
         
-    private:
-        ObjectCreatorMap _objectCreatorMap;
+        // Default creators based on className for convenience.
+        template <class T>
+        void registerClass() { creators[T::staticMetaObject.className()] = defaultCreator<T>; }
+        template <class T>
+        void registerChildClass(QObject *parent) { creators[T::staticMetaObject.className()] = std::bind(defaultChildCreator<T>, parent); }
     };
     
     /* --------------------------------------------------------------------------------
