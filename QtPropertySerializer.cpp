@@ -46,6 +46,15 @@ namespace QtPropertySerializer
         return data;
     }
     
+    QVariantList serialize(const QList<QObject*> objects, int childDepth, bool includeReadOnlyProperties)
+    {
+        QVariantList data;
+        for(QObject *object : objects) {
+            data.append(serialize(object, childDepth, includeReadOnlyProperties));
+        }
+        return data;
+    }
+    
     void addMappedData(QVariantMap &data, const QByteArray &key, const QVariant &value)
     {
         if(value.canConvert<QObject*>()) {
@@ -188,6 +197,47 @@ namespace QtPropertySerializer
                 const QByteArray propertyName = i.key().toUtf8();
                 const QVariant &propertyValue = i.value();
                 object->setProperty(propertyName.constData(), propertyValue);
+            }
+        }
+    }
+    
+    void deserialize(QList<QObject*> &objects, const QVariantList &data, ObjectFactory *factory, const QByteArray &objectCreatorKey)
+    {
+        int i = 0;
+        for(QVariantList::const_iterator j = data.constBegin(); j != data.constEnd(); ++j) {
+            if(j->type() == QVariant::Map) {
+                // Objects should be maps.
+                QObject *object = i < objects.size() ? objects[i] : NULL;
+                if(!object && factory) {
+                    if(!objectCreatorKey.isEmpty()) {
+                        object = factory->create(objectCreatorKey);
+                    }
+                    if(!object && !objects.isEmpty()) {
+                        // Use className of  object in the list as the factory creator key.
+                        for(QObject *obj : objects) {
+                            if(obj) {
+                                object = factory->create(obj->metaObject()->className());
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(object) {
+                    deserialize(object, j->toMap(), factory);
+                    if(i < objects.size()) {
+                        objects[i] = object;
+                    } else {
+                        objects.append(object);
+                    }
+                } else {
+                    // Failed to deserialize map into object.
+                    // Should only happen if we failed to create the object (i.e. mising factory, creator key or preallocated object in list)
+                    if(i >= objects.size()) {
+                        // Since we can't make new objects, give up.
+                        return;
+                    }
+                }
+                ++i;
             }
         }
     }

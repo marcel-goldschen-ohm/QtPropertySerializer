@@ -18,6 +18,7 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
+#include <QVariantList>
 #include <QVariantMap>
 
 #ifdef DEBUG
@@ -65,6 +66,7 @@ namespace QtPropertySerializer
      * Serialize QObject --> QVariantMap
      * -------------------------------------------------------------------------------- */
     QVariantMap serialize(const QObject *object, int childDepth = -1, bool includeReadOnlyProperties = true);
+    QVariantList serialize(const QList<QObject*> objects, int childDepth = -1, bool includeReadOnlyProperties = true);
     
     // Helper function for serialize().
     void addMappedData(QVariantMap &data, const QByteArray &key, const QVariant &value);
@@ -73,6 +75,7 @@ namespace QtPropertySerializer
      * Deserialize QVariantMap --> QObject
      * -------------------------------------------------------------------------------- */
     void deserialize(QObject *object, const QVariantMap &data, ObjectFactory *factory = NULL);
+    void deserialize(QList<QObject*> &objects, const QVariantList &data, ObjectFactory *factory = NULL, const QByteArray &objectCreatorKey = "");
     
     /* --------------------------------------------------------------------------------
      * Read/Write from/to JSON file.
