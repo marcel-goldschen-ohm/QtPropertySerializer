@@ -50,10 +50,11 @@ namespace QtPropertySerializer
         QObject* create(const QByteArray &key) const { return creators.contains(key) ? creators.value(key)() : 0; }
         
         // For convenience. e.g. call ObjectFactory::registerCreator("MyClass", ObjectFactory::defaultCreator<MyClass>);
+        // Requires T to have a default constructor T().
         template <class T>
         static QObject* defaultCreator() { return new T(); }
         template <class T>
-        static QObject* defaultChildCreator(QObject *parent) { return new T(parent); }
+        static QObject* defaultChildCreator(QObject *parent) { T *object = new T(); object->setParent(parent); return object; }
         
         // Default creators based on className for convenience.
         template <class T>
