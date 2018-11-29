@@ -24,6 +24,12 @@ Everything is in:
 * `QtPropertySerializer.h`
 * `QtPropertySerializer.cpp`
 
+### CMake:
+
+See `CMakeLists.txt` for example build as a static library.
+
+:point_right: **This is most likely what you want:** See `test/CMakeLists.txt` for example build of an app that uses QtPropertySerializer. This build uses CMake to automatically download QtPropertySerializer files directly from this GitHub repository, builds QtPropertySerializer as a static library and links it to the app executable. This way you can use QtPropertySerializer in your project without downloading or managing the QtPropertySerializer repository manually.
+
 ### Requires:
 
 * [Qt](http://www.qt.io)
