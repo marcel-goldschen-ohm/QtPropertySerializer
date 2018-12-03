@@ -41,7 +41,7 @@ find_package(Qt5 COMPONENTS Core REQUIRED)
 
 # Build fetched QtPropertySerializer as a static library.
 add_library(QtPropertySerializer STATIC ${qtpropertyserializer_SOURCE_DIR}/QtPropertySerializer.cpp ${qtpropertyserializer_SOURCE_DIR}/QtPropertySerializer.h)
-qt5_use_modules(QtOpenGLViewer Core)
+qt5_use_modules(QtPropertySerializer Core)
 target_link_libraries(QtPropertySerializer ${QT_LIBRARIES})
 
 # Build project executable.
